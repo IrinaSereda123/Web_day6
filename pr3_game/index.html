@@ -1,1 +1,931 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📖 Практическая работа №3 — Создаём игру «Арканоид»</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #1a1a2e 100%);
+            color: #f0f0f0;
+            line-height: 1.7;
+            padding: 30px 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #ff6b6b, #feca57);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #aaa;
+            margin-bottom: 40px;
+            font-size: 1.1rem;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin: 30px 0 20px;
+            padding-left: 15px;
+            border-left: 5px solid #feca57;
+            color: #feca57;
+        }
+        
+        h3 {
+            font-size: 1.3rem;
+            margin: 25px 0 15px;
+            color: #ff6b6b;
+        }
+        
+        h4 {
+            font-size: 1.1rem;
+            margin: 15px 0 10px;
+            color: #ffaa44;
+        }
+        
+        pre {
+            background: #0d1117;
+            border-radius: 12px;
+            padding: 18px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-size: 14px;
+            border-left: 4px solid #feca57;
+            position: relative;
+        }
+        
+        code {
+            font-family: 'Fira Code', 'Courier New', monospace;
+            color: #7ee787;
+            font-size: 13px;
+        }
+        
+        .info-box {
+            background: rgba(254, 202, 87, 0.1);
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-left: 4px solid #feca57;
+        }
+        
+        .tip-box {
+            background: rgba(0, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-left: 4px solid #00ffff;
+        }
+        
+        .warning-box {
+            background: rgba(255, 107, 107, 0.1);
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-left: 4px solid #ff6b6b;
+        }
+        
+        .success-box {
+            background: rgba(0, 255, 127, 0.1);
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-left: 4px solid #00ff7f;
+        }
+        
+        .task-box {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .task-box h3 {
+            margin-top: 0;
+            color: #feca57;
+        }
+        
+        .toc {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .toc a {
+            color: #feca57;
+            text-decoration: none;
+            display: block;
+            margin: 8px 0;
+        }
+        
+        .toc a:hover {
+            text-decoration: underline;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin: 30px 0;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #ff6b6b, #feca57);
+            color: #1a1a2e;
+            padding: 12px 24px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: transform 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .restart-btn {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            margin-left: 10px;
+        }
+        
+        hr {
+            border: none;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #feca57, transparent);
+            margin: 30px 0;
+        }
+        
+        .cheatsheet {
+            background: #0d1117;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .cheatsheet table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .cheatsheet th, .cheatsheet td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #333;
+        }
+        
+        .cheatsheet th {
+            color: #feca57;
+        }
+        
+        .solution-hint {
+            background: rgba(0, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 10px 15px;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+        
+        .solution-hint summary {
+            cursor: pointer;
+            color: #feca57;
+        }
+        
+        .solution-hint summary:hover {
+            text-decoration: underline;
+        }
+        
+        .game-preview {
+            background: #0d1117;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .game-preview canvas {
+            background: #eee;
+            display: block;
+            margin: 0 auto;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+        
+        .game-preview p {
+            margin-top: 10px;
+            color: #aaa;
+            font-size: 14px;
+        }
+        
+        .game-controls {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .game-btn {
+            background: linear-gradient(135deg, #ff6b6b, #feca57);
+            color: #1a1a2e;
+            padding: 10px 24px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .game-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .game-status {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #feca57;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Практическая работа №3</h1>
+        <div class="subtitle">Создаём игру «Арканоид» на чистом JavaScript</div>
+        
+        <div class="toc">
+            <strong>📚 Содержание инструкции:</strong>
+            <a href="#goal">🎯 Цель работы</a>
+            <a href="#preview">🕹️ Что получится в итоге</a>
+            <a href="#step1">📁 Шаг 1. Базовая разметка</a>
+            <a href="#step2">⚽ Шаг 2. Рисуем мяч</a>
+            <a href="#step3">🏓 Шаг 3. Добавляем ракетку и управление</a>
+            <a href="#step4">🧱 Шаг 4. Создаём кирпичи</a>
+            <a href="#step5">💥 Шаг 5. Обнаружение столкновений</a>
+            <a href="#step6">🏆 Шаг 6. Счёт и жизни</a>
+            <a href="#bonus">⭐ Бонус-задания</a>
+            <a href="#cheatsheet">📚 Шпаргалка по canvas</a>
+        </div>
+        
+        <h2 id="goal">🎯 Цель работы</h2>
+        <div class="info-box">
+            <p>Создать полноценную игру «Арканоид» (Breakout), в которой нужно:</p>
+            <ol style="margin-left: 20px;">
+                <li>🎨 отбивать мяч ракеткой;</li>
+                <li>🧱 разбивать кирпичи;</li>
+                <li>🏆 набирать очки;</li>
+                <li>❤️ иметь несколько жизней;</li>
+                <li>🎮 управлять ракеткой с клавиатуры и мыши.</li>
+            </ol>
+        </div>
+        
+        <h2 id="preview">🕹️ Что получится в итоге</h2>
+        <div class="game-preview">
+            <canvas id="previewCanvas" width="480" height="320" style="background: #eee;"></canvas>
+            <div class="game-controls">
+                <button id="startGameBtn" class="game-btn">🎮 Начать игру</button>
+                <button id="restartGameBtn" class="game-btn restart-btn">🔄 Начать заново</button>
+            </div>
+            <div id="gameStatus" class="game-status">⚡ Нажми «Начать игру», чтобы играть! Управление: стрелки или мышь</div>
+        </div>
+        
+        <script>
+            // ПОЛНОЦЕННАЯ ИГРА ДЛЯ ПРЕДПРОСМОТРА С КНОПКОЙ СТАРТА
+            (function() {
+                const canvas = document.getElementById('previewCanvas');
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                
+                // Игровые переменные
+                let animationId = null;
+                let gameRunning = false;
+                
+                // Мяч
+                let x = canvas.width / 2;
+                let y = canvas.height - 30;
+                let dx = 2;
+                let dy = -2;
+                const ballRadius = 8;
+                
+                // Ракетка
+                let paddleHeight = 10;
+                let paddleWidth = 75;
+                let paddleX = (canvas.width - paddleWidth) / 2;
+                let rightPressed = false;
+                let leftPressed = false;
+                
+                // Кирпичи
+                const brickRowCount = 3;
+                const brickColumnCount = 5;
+                const brickWidth = 75;
+                const brickHeight = 15;
+                const brickPadding = 10;
+                const brickOffsetTop = 30;
+                const brickOffsetLeft = 30;
+                
+                let bricks = [];
+                let score = 0;
+                let lives = 3;
+                
+                // Функция инициализации/сброса игры
+                function initGame() {
+                    // Сброс мяча
+                    x = canvas.width / 2;
+                    y = canvas.height - 30;
+                    dx = 2;
+                    dy = -2;
+                    
+                    // Сброс ракетки
+                    paddleX = (canvas.width - paddleWidth) / 2;
+                    rightPressed = false;
+                    leftPressed = false;
+                    
+                    // Сброс счёта и жизней
+                    score = 0;
+                    lives = 3;
+                    
+                    // Сброс кирпичей
+                    bricks = [];
+                    for (let c = 0; c < brickColumnCount; c++) {
+                        bricks[c] = [];
+                        for (let r = 0; r < brickRowCount; r++) {
+                            bricks[c][r] = { x: 0, y: 0, status: 1 };
+                        }
+                    }
+                    
+                    updateStatusMessage("🎮 Игра идёт! Управление: стрелки или мышь");
+                }
+                
+                // Обновление статуса
+                function updateStatusMessage(msg) {
+                    const statusDiv = document.getElementById('gameStatus');
+                    if (statusDiv) statusDiv.textContent = msg;
+                }
+                
+                // Рисуем мяч
+                function drawBall() {
+                    ctx.beginPath();
+                    ctx.arc(x, y, ballRadius, 0, Math.PI * 2);
+                    ctx.fillStyle = "#0095DD";
+                    ctx.fill();
+                    ctx.closePath();
+                }
+                
+                // Рисуем ракетку
+                function drawPaddle() {
+                    ctx.beginPath();
+                    ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
+                    ctx.fillStyle = "#0095DD";
+                    ctx.fill();
+                    ctx.closePath();
+                }
+                
+                // Рисуем кирпичи
+                function drawBricks() {
+                    for (let c = 0; c < brickColumnCount; c++) {
+                        for (let r = 0; r < brickRowCount; r++) {
+                            if (bricks[c][r].status === 1) {
+                                const brickX = c * (brickWidth + brickPadding) + brickOffsetLeft;
+                                const brickY = r * (brickHeight + brickPadding) + brickOffsetTop;
+                                bricks[c][r].x = brickX;
+                                bricks[c][r].y = brickY;
+                                ctx.beginPath();
+                                ctx.rect(brickX, brickY, brickWidth, brickHeight);
+                                ctx.fillStyle = "#0095DD";
+                                ctx.fill();
+                                ctx.closePath();
+                            }
+                        }
+                    }
+                }
+                
+                // Рисуем счёт
+                function drawScore() {
+                    ctx.font = "16px Arial";
+                    ctx.fillStyle = "#0095DD";
+                    ctx.fillText("Score: " + score, 8, 20);
+                }
+                
+                // Рисуем жизни
+                function drawLives() {
+                    ctx.font = "16px Arial";
+                    ctx.fillStyle = "#0095DD";
+                    ctx.fillText("Lives: " + lives, canvas.width - 65, 20);
+                }
+                
+                // Рисуем сообщение "ПАУЗА" если игра не запущена
+                function drawPauseMessage() {
+                    if (!gameRunning) {
+                        ctx.font = "24px Arial";
+                        ctx.fillStyle = "#ff6b6b";
+                        ctx.textAlign = "center";
+                        ctx.fillText("⏸ НАЖМИ СТАРТ", canvas.width / 2, canvas.height / 2);
+                        ctx.font = "14px Arial";
+                        ctx.fillStyle = "#aaa";
+                        ctx.fillText("Управление: стрелки влево/вправо или мышь", canvas.width / 2, canvas.height / 2 + 40);
+                        ctx.textAlign = "left";
+                    }
+                }
+                
+                // Обнаружение столкновений с кирпичами
+                function collisionDetection() {
+                    for (let c = 0; c < brickColumnCount; c++) {
+                        for (let r = 0; r < brickRowCount; r++) {
+                            const b = bricks[c][r];
+                            if (b.status === 1) {
+                                if (x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
+                                    dy = -dy;
+                                    b.status = 0;
+                                    score++;
+                                    
+                                    if (score === brickRowCount * brickColumnCount) {
+                                        gameRunning = false;
+                                        updateStatusMessage("🎉 ПОБЕДА! 🎉 Нажми «Начать заново», чтобы сыграть ещё раз");
+                                        cancelAnimationFrame(animationId);
+                                        draw();
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                // Основной игровой цикл
+                function draw() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    drawBricks();
+                    drawBall();
+                    drawPaddle();
+                    drawScore();
+                    drawLives();
+                    drawPauseMessage();
+                    
+                    if (gameRunning) {
+                        collisionDetection();
+                        
+                        // Движение ракетки
+                        if (rightPressed && paddleX < canvas.width - paddleWidth) paddleX += 7;
+                        if (leftPressed && paddleX > 0) paddleX -= 7;
+                        
+                        // Отскок от стен
+                        if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) dx = -dx;
+                        if (y + dy < ballRadius) dy = -dy;
+                        
+                        // Отскок от ракетки
+                        if (y + dy > canvas.height - ballRadius - paddleHeight && 
+                            y + dy < canvas.height - ballRadius &&
+                            x > paddleX && x < paddleX + paddleWidth) {
+                            dy = -dy;
+                        }
+                        
+                        // Потеря жизни
+                        if (y + dy > canvas.height - ballRadius) {
+                            lives--;
+                            if (lives === 0) {
+                                gameRunning = false;
+                                updateStatusMessage("💀 GAME OVER 💀 Твои очки: " + score + ". Нажми «Начать заново»");
+                                cancelAnimationFrame(animationId);
+                                draw();
+                                return;
+                            } else {
+                                x = canvas.width / 2;
+                                y = canvas.height - 30;
+                                dx = 2;
+                                dy = -2;
+                                paddleX = (canvas.width - paddleWidth) / 2;
+                                updateStatusMessage("❤️ Жизнь потеряна! Осталось жизней: " + lives);
+                            }
+                        }
+                        
+                        x += dx;
+                        y += dy;
+                    }
+                    
+                    animationId = requestAnimationFrame(draw);
+                }
+                
+                // Запуск игры
+                function startGame() {
+                    if (gameRunning) return;
+                    gameRunning = true;
+                    updateStatusMessage("🎮 Игра идёт! Управление: стрелки или мышь");
+                }
+                
+                // Полный перезапуск игры
+                function restartGame() {
+                    gameRunning = true;
+                    initGame();
+                    updateStatusMessage("🎮 Игра перезапущена! Удачи!");
+                }
+                
+                // Управление с клавиатуры
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'ArrowRight') rightPressed = true;
+                    if (e.key === 'ArrowLeft') leftPressed = true;
+                });
+                document.addEventListener('keyup', (e) => {
+                    if (e.key === 'ArrowRight') rightPressed = false;
+                    if (e.key === 'ArrowLeft') leftPressed = false;
+                });
+                
+                // Управление мышью
+                canvas.addEventListener('mousemove', (e) => {
+                    if (!gameRunning) return;
+                    const relativeX = e.clientX - canvas.offsetLeft;
+                    if (relativeX > 0 && relativeX < canvas.width) {
+                        paddleX = relativeX - paddleWidth / 2;
+                        if (paddleX < 0) paddleX = 0;
+                        if (paddleX > canvas.width - paddleWidth) paddleX = canvas.width - paddleWidth;
+                    }
+                });
+                
+                // Кнопки
+                document.getElementById('startGameBtn').addEventListener('click', startGame);
+                document.getElementById('restartGameBtn').addEventListener('click', () => {
+                    restartGame();
+                    // Если анимация остановлена, перезапускаем
+                    if (animationId) cancelAnimationFrame(animationId);
+                    draw();
+                });
+                
+                // Инициализация и запуск рисования (но не игры)
+                initGame();
+                draw();
+            })();
+        </script>
+        
+        <h2 id="step1">📁 Шаг 1. Базовая разметка</h2>
+        <p>Создай новый файл <code>game.html</code> и напиши базовую структуру:</p>
+        
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta charset="utf-8"&gt;
+    &lt;title&gt;Арканоид — моя игра&lt;/title&gt;
+    &lt;style&gt;
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+        canvas {
+            background: #eee;
+            display: block;
+            margin: 20px auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        }
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .controls {
+            text-align: center;
+            margin-top: 10px;
+        }
+        button {
+            background: linear-gradient(135deg, #ff6b6b, #feca57);
+            color: #1a1a2e;
+            padding: 10px 24px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            transform: scale(1.05);
+        }
+        .status {
+            text-align: center;
+            margin-top: 10px;
+            color: #feca57;
+            font-size: 14px;
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;canvas id="gameCanvas" width="480" height="320"&gt;&lt;/canvas&gt;
+    &lt;div class="controls"&gt;
+        &lt;button id="startBtn"&gt;🎮 Начать игру&lt;/button&gt;
+        &lt;button id="restartBtn"&gt;🔄 Начать заново&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;div id="gameStatus" class="status"&gt;⚡ Нажми «Начать игру»&lt;/div&gt;
+    &lt;script&gt;
+        // Весь код игры будем писать здесь
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        
+        <div class="tip-box">
+            <strong>💡 Пояснение:</strong>
+            <ul>
+                <li>Добавлены кнопки «Начать игру» и «Начать заново»</li>
+                <li>Добавлен блок <code>#gameStatus</code> для отображения состояния игры</li>
+                <li>Игра не начинается автоматически — ждёт нажатия кнопки</li>
+            </ul>
+        </div>
+        
+        <h2 id="step2">⚽ Шаг 2. Рисуем мяч и заставляем его двигаться</h2>
+        
+        <div class="task-box">
+            <h3>✏️ Твоя задача:</h3>
+            <p>Напиши код, который:</p>
+            <ol>
+                <li>Получает элемент canvas и контекст для рисования</li>
+                <li>Рисует мяч (круг радиусом 8-10 пикселей)</li>
+                <li>Заставляет мяч двигаться по экрану ТОЛЬКО после нажатия кнопки «Старт»</li>
+                <li>Очищает холст перед каждым кадром</li>
+                <li>Реализует отскок от стен (левой, правой и верхней)</li>
+            </ol>
+            
+            <div class="tip-box">
+                <strong>💡 Подсказки:</strong>
+                <ul>
+                    <li>Используй переменную <code>gameRunning = false</code> для отслеживания состояния игры</li>
+                    <li>При нажатии на кнопку «Старт» устанавливай <code>gameRunning = true</code></li>
+                    <li>В функции <code>draw()</code> обновляй позицию мяча только если <code>gameRunning === true</code></li>
+                </ul>
+            </div>
+            
+            <details class="solution-hint">
+                <summary>🔑 Посмотреть решение (только если совсем не получается)</summary>
+                <pre><code>const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
 
+let gameRunning = false;
+let x = canvas.width / 2;
+let y = canvas.height - 30;
+let dx = 2;
+let dy = -2;
+const ballRadius = 8;
+
+function drawBall() {
+    ctx.beginPath();
+    ctx.arc(x, y, ballRadius, 0, Math.PI * 2);
+    ctx.fillStyle = "#0095DD";
+    ctx.fill();
+    ctx.closePath();
+}
+
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawBall();
+    
+    if (gameRunning) {
+        if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) dx = -dx;
+        if (y + dy < ballRadius) dy = -dy;
+        
+        x += dx;
+        y += dy;
+    }
+    
+    requestAnimationFrame(draw);
+}
+
+draw();
+
+document.getElementById('startBtn').addEventListener('click', () => {
+    gameRunning = true;
+});</code></pre>
+            </details>
+        </div>
+        
+        <h2 id="step3">🏓 Шаг 3. Добавляем ракетку и управление</h2>
+        
+        <div class="task-box">
+            <h3>✏️ Твоя задача:</h3>
+            <p>Добавь в игру ракетку, которой можно управлять:</p>
+            <ol>
+                <li>Ракетка должна быть прямоугольником шириной 75px и высотой 10px</li>
+                <li>Ракетка должна двигаться влево и вправо с помощью стрелок клавиатуры ТОЛЬКО когда игра запущена</li>
+                <li>Ракетка не должна выходить за границы canvas</li>
+                <li>Реализуй отскок мяча от ракетки</li>
+                <li>Добавь обработчик события <code>mousemove</code> для управления мышью</li>
+            </ol>
+            
+            <div class="tip-box">
+                <strong>💡 Подсказки:</strong>
+                <ul>
+                    <li>Используй флаги <code>rightPressed</code> и <code>leftPressed</code></li>
+                    <li>Двигай ракетку только если <code>gameRunning === true</code></li>
+                    <li>Для отскока от ракетки проверяй позицию мяча относительно ракетки</li>
+                </ul>
+            </div>
+            
+            <details class="solution-hint">
+                <summary>🔑 Посмотреть решение (только если совсем не получается)</summary>
+                <pre><code>let paddleHeight = 10;
+let paddleWidth = 75;
+let paddleX = (canvas.width - paddleWidth) / 2;
+let rightPressed = false;
+let leftPressed = false;
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') rightPressed = true;
+    else if (e.key === 'ArrowLeft') leftPressed = true;
+});
+
+document.addEventListener('keyup', (e) => {
+    if (e.key === 'ArrowRight') rightPressed = false;
+    else if (e.key === 'ArrowLeft') leftPressed = false;
+});
+
+canvas.addEventListener('mousemove', (e) => {
+    if (!gameRunning) return;
+    const relativeX = e.clientX - canvas.offsetLeft;
+    if (relativeX > 0 && relativeX < canvas.width) {
+        paddleX = relativeX - paddleWidth / 2;
+        if (paddleX < 0) paddleX = 0;
+        if (paddleX > canvas.width - paddleWidth) paddleX = canvas.width - paddleWidth;
+    }
+});
+
+function drawPaddle() {
+    ctx.beginPath();
+    ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
+    ctx.fillStyle = "#0095DD";
+    ctx.fill();
+    ctx.closePath();
+}
+
+// В функции draw() добавь:
+if (gameRunning) {
+    if (rightPressed && paddleX < canvas.width - paddleWidth) paddleX += 7;
+    if (leftPressed && paddleX > 0) paddleX -= 7;
+    
+    // Отскок от ракетки
+    if (y + dy > canvas.height - ballRadius - paddleHeight && 
+        y + dy < canvas.height - ballRadius &&
+        x > paddleX && x < paddleX + paddleWidth) {
+        dy = -dy;
+    }
+}</code></pre>
+            </details>
+        </div>
+        
+        <h2 id="step4">🧱 Шаг 4. Создаём кирпичи</h2>
+        
+        <div class="task-box">
+            <h3>✏️ Твоя задача:</h3>
+            <p>Добавь кирпичи, которые нужно разбивать мячом:</p>
+            <ol>
+                <li>Создай массив кирпичей (3 строки, 5 столбцов)</li>
+                <li>Каждый кирпич должен иметь координаты x, y и статус (1 — целый, 0 — разбит)</li>
+                <li>Напиши функцию <code>drawBricks()</code>, которая рисует только целые кирпичи</li>
+                <li>Добавь функцию <code>initGame()</code> для сброса кирпичей при перезапуске</li>
+            </ol>
+            
+            <details class="solution-hint">
+                <summary>🔑 Посмотреть решение</summary>
+                <pre><code>const brickRowCount = 3;
+const brickColumnCount = 5;
+const brickWidth = 75;
+const brickHeight = 15;
+const brickPadding = 10;
+const brickOffsetTop = 30;
+const brickOffsetLeft = 30;
+
+let bricks = [];
+
+function initBricks() {
+    bricks = [];
+    for (let c = 0; c < brickColumnCount; c++) {
+        bricks[c] = [];
+        for (let r = 0; r < brickRowCount; r++) {
+            bricks[c][r] = { x: 0, y: 0, status: 1 };
+        }
+    }
+}
+
+function drawBricks() {
+    for (let c = 0; c < brickColumnCount; c++) {
+        for (let r = 0; r < brickRowCount; r++) {
+            if (bricks[c][r].status === 1) {
+                const brickX = c * (brickWidth + brickPadding) + brickOffsetLeft;
+                const brickY = r * (brickHeight + brickPadding) + brickOffsetTop;
+                bricks[c][r].x = brickX;
+                bricks[c][r].y = brickY;
+                ctx.beginPath();
+                ctx.rect(brickX, brickY, brickWidth, brickHeight);
+                ctx.fillStyle = "#0095DD";
+                ctx.fill();
+                ctx.closePath();
+            }
+        }
+    }
+}</code></pre>
+            </details>
+        </div>
+        
+        <h2 id="step5">💥 Шаг 5. Обнаружение столкновений</h2>
+        
+        <div class="task-box">
+            <h3>✏️ Твоя задача:</h3>
+            <p>Реализуй столкновение мяча с кирпичами:</p>
+            <ol>
+                <li>Напиши функцию <code>collisionDetection()</code></li>
+                <li>При попадании меняй направление мяча и устанавливай статус кирпича в 0</li>
+                <li>Добавь переменную <code>score</code> для подсчёта очков</li>
+                <li>При победе останавливай игру и показывай сообщение</li>
+            </ol>
+            
+            <details class="solution-hint">
+                <summary>🔑 Посмотреть решение</summary>
+                <pre><code>let score = 0;
+
+function drawScore() {
+    ctx.font = "16px Arial";
+    ctx.fillStyle = "#0095DD";
+    ctx.fillText("Score: " + score, 8, 20);
+}
+
+function collisionDetection() {
+    for (let c = 0; c < brickColumnCount; c++) {
+        for (let r = 0; r < brickRowCount; r++) {
+            const b = bricks[c][r];
+            if (b.status === 1) {
+                if (x > b.x && x < b.x + brickWidth && 
+                    y > b.y && y < b.y + brickHeight) {
+                    dy = -dy;
+                    b.status = 0;
+                    score++;
+                    
+                    if (score === brickRowCount * brickColumnCount) {
+                        gameRunning = false;
+                        updateStatusMessage("🎉 ПОБЕДА! 🎉");
+                    }
+                }
+            }
+        }
+    }
+}</code></pre>
+            </details>
+        </div>
+        
+        <h2 id="step6">🏆 Шаг 6. Счёт и жизни</h2>
+        
+        <div class="task-box">
+            <h3>✏️ Твоя задача:</h3>
+            <p>Добавь систему жизней и кнопку перезапуска:</p>
+            <ol>
+                <li>Добавь переменную <code>lives = 3</code></li>
+                <li>При потере жизни — уменьшай счётчик и сбрасывай позицию мяча и ракетки</li>
+                <li>При Game Over — останавливай игру и показывай сообщение</li>
+                <li>Реализуй кнопку «Начать заново» — полный сброс игры</li>
+            </ol>
+            
+            <details class="solution-hint">
+                <summary>🔑 Посмотреть решение</summary>
+                <pre><code>let lives = 3;
+
+function drawLives() {
+    ctx.font = "16px Arial";
+    ctx.fillStyle = "#0095DD";
+    ctx.fillText("Lives: " + lives, canvas.width - 65, 20);
+}
+
+function resetBallAndPaddle() {
+    x = canvas.width / 2;
+    y = canvas.height - 30;
+    dx = 2;
+    dy = -2;
+    paddleX = (canvas.width - paddleWidth) / 2;
+}
+
+// В функции draw() проверка потери жизни:
+if (y + dy > canvas.height - ballRadius) {
+    lives--;
+    if (lives === 0) {
+        gameRunning = false;
+        updateStatusMessage("💀 GAME OVER 💀 Очки: " + score);
+    } else {
+        resetBallAndPaddle();
+        updateStatusMessage("❤️ Жизнь потеряна! Осталось: " + lives);
+    }
+}
+
+// Функция полного перезапуска
+function restart
