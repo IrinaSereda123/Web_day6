@@ -1,1 +1,623 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📖 Практическая работа №2 — DOM-дерево</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #1a1a2e 100%);
+            color: #f0f0f0;
+            line-height: 1.7;
+            padding: 30px 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #ff6b6b, #feca57);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #aaa;
+            margin-bottom: 40px;
+            font-size: 1.1rem;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin: 30px 0 20px;
+            padding-left: 15px;
+            border-left: 5px solid #feca57;
+            color: #feca57;
+        }
+        
+        h3 {
+            font-size: 1.3rem;
+            margin: 25px 0 15px;
+            color: #ff6b6b;
+        }
+        
+        h4 {
+            font-size: 1.1rem;
+            margin: 15px 0 10px;
+            color: #ffaa44;
+        }
+        
+        pre {
+            background: #0d1117;
+            border-radius: 12px;
+            padding: 18px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-size: 14px;
+            border-left: 4px solid #feca57;
+            position: relative;
+        }
+        
+        code {
+            font-family: 'Fira Code', 'Courier New', monospace;
+            color: #7ee787;
+            font-size: 13px;
+        }
+        
+        .info-box {
+            background: rgba(254, 202, 87, 0.1);
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-left: 4px solid #feca57;
+        }
+        
+        .tip-box {
+            background: rgba(0, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-left: 4px solid #00ffff;
+        }
+        
+        .warning-box {
+            background: rgba(255, 107, 107, 0.1);
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-left: 4px solid #ff6b6b;
+        }
+        
+        .success-box {
+            background: rgba(0, 255, 127, 0.1);
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-left: 4px solid #00ff7f;
+        }
+        
+        .task-box {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .task-box h3 {
+            margin-top: 0;
+            color: #feca57;
+        }
+        
+        .toc {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .toc a {
+            color: #feca57;
+            text-decoration: none;
+            display: block;
+            margin: 8px 0;
+        }
+        
+        .toc a:hover {
+            text-decoration: underline;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin: 30px 0;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #ff6b6b, #feca57);
+            color: #1a1a2e;
+            padding: 12px 24px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: transform 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            transform: scale(1.05);
+        }
+        
+        hr {
+            border: none;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #feca57, transparent);
+            margin: 30px 0;
+        }
+        
+        .cheatsheet {
+            background: #0d1117;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .cheatsheet table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .cheatsheet th, .cheatsheet td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #333;
+        }
+        
+        .cheatsheet th {
+            color: #feca57;
+        }
+        
+        .demo-box {
+            background: #0d2818;
+            border-radius: 16px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid #6bffb8;
+        }
+        
+        .demo-box h3 {
+            margin-top: 0;
+            color: #feca57;
+        }
+        
+        .solution-hint {
+            background: rgba(0, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 10px 15px;
+            margin: 10px 0;
+            font-size: 14px;
+            color: #88ffaa;
+        }
+        
+        .solution-hint summary {
+            cursor: pointer;
+            color: #feca57;
+        }
+        
+        .solution-hint summary:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌳 Практическая работа №2</h1>
+        <div class="subtitle">DOM-дерево: изучаем структуру веб-страницы и учимся управлять элементами</div>
+        
+        <div class="toc">
+            <strong>📚 Содержание инструкции:</strong>
+            <a href="#goal">🎯 Задание</a>
+            <a href="#theory">📖 Что такое DOM?</a>
+            <a href="#task1">🧩 Задание 1. Дочерние элементы DOM</a>
+            <a href="#task2">🎲 Задание 2. Выделение ячеек по диагонали</a>
+            <a href="#task3">🔍 Задание 3. Использование getElementById</a>
+            <a href="#bonus1">⭐ Бонус-задание 1. Светофор</a>
+            <a href="#bonus2">🔎 Бонус-задание 2. Исследователь страницы</a>
+            <a href="#cheatsheet">📚 Шпаргалка по DOM</a>
+        </div>
+        
+        <h2 id="goal">🎯 Задание</h2>
+        <div class="info-box">
+            <p>Познакомиться с DOM-деревом и научиться:</p>
+            <ol style="margin-left: 20px;">
+                <li>🔍 находить элементы на странице с помощью JavaScript;</li>
+                <li>🎨 получать доступ к дочерним элементам;</li>
+                <li>📝 использовать <code>document.getElementById</code> и навигацию по DOM;</li>
+                <li>🎮 создавать интерактивные элементы (светофор);</li>
+                <li>🔎 исследовать DOM реальных сайтов.</li>
+            </ol>
+        </div>
+        
+        <h2 id="theory">📖 Часть 1. Что такое DOM?</h2>
+        <p><strong>DOM (Document Object Model)</strong> — это представление HTML-документа в виде дерева тегов. Каждый тег является объектом, вложенные теги — «детьми» родительского элемента, а текст внутри тега — текстовым узлом.</p>
+        
+        <div class="tip-box">
+            <strong>🔍 Как посмотреть DOM:</strong> Нажми <code>F12</code> → вкладка <strong>Elements</strong>. Там видно всё дерево страницы. Можно сворачивать/разворачивать теги и смотреть стили.
+        </div>
+        
+        <div class="demo-box">
+            <h3>🌱 Пример DOM-дерева</h3>
+            <p>Для такого HTML:</p>
+            <pre><code>&lt;!DOCTYPE HTML&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;О лосях&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    Правда о лосях.
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+            <p>DOM-дерево будет выглядеть так:</p>
+            <pre><code>html
+├── head
+│   └── title
+│       └── "О лосях"
+└── body
+    └── "Правда о лосях."</code></pre>
+        </div>
+        
+        <div class="tip-box">
+            <strong>💡 Важно знать:</strong>
+            <ul>
+                <li><strong>Узлы-элементы</strong> — HTML-теги, основные строительные блоки.</li>
+                <li><strong>Текстовые узлы</strong> — содержат текст (обозначаются как #text).</li>
+                <li><strong>Комментарии</strong> — тоже являются узлами DOM.</li>
+                <li>Пробелы и переводы строк — тоже текстовые узлы!</li>
+                <li>Существует 12 типов узлов, но на практике мы работаем с 4: document, элементы, текстовые узлы, комментарии.</li>
+            </ul>
+        </div>
+        
+        <h2 id="task1">🧩 Задание 1. Дочерние элементы DOM</h2>
+        <p>Для страницы с таким кодом напиши JavaScript, который получит доступ к указанным элементам.</p>
+        
+        <pre><code>&lt;html&gt;
+&lt;body&gt;
+    &lt;div&gt;Пользователи:&lt;/div&gt;
+    &lt;ul&gt;
+        &lt;li&gt;Джон&lt;/li&gt;
+        &lt;li&gt;Пит&lt;/li&gt;
+    &lt;/ul&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        
+        <div class="task-box">
+            <h3>✏️ Твоя задача:</h3>
+            <ol style="margin-left: 20px;">
+                <li>Найти элемент <code>&lt;div&gt;</code></li>
+                <li>Найти элемент <code>&lt;ul&gt;</code></li>
+                <li>Найти второй <code>&lt;li&gt;</code> (с именем Пит)</li>
+            </ol>
+            <p>Напиши код в консоли браузера или в теге <code>&lt;script&gt;</code>.</p>
+            <div class="tip-box">
+                <strong>💡 Подсказки:</strong>
+                <ul>
+                    <li><code>document.body.firstElementChild</code> — первый дочерний элемент body</li>
+                    <li><code>document.body.children[0]</code> — тоже первый дочерний элемент</li>
+                    <li><code>document.body.lastElementChild</code> — последний дочерний элемент body</li>
+                    <li><code>element.lastElementChild</code> — последний дочерний элемент</li>
+                </ul>
+            </div>
+            <details class="solution-hint">
+                <summary>🔑 Посмотреть решение (только если совсем не получается)</summary>
+                <pre><code>// DOM-узел элемента &lt;div&gt;:
+document.body.firstElementChild
+// или
+document.body.children[0]
 
+// DOM-узел элемента &lt;ul&gt;:
+document.body.lastElementChild
+// или
+document.body.children[1]
+
+// Второй &lt;li&gt; (с именем Пит):
+document.body.lastElementChild.lastElementChild</code></pre>
+            </details>
+        </div>
+        
+        <h2 id="task2">🎲 Задание 2. Выделение ячеек по диагонали</h2>
+        <p>Напиши код, который выделит красным цветом все ячейки в таблице по диагонали.</p>
+        
+        <div class="task-box">
+            <h3>✏️ Твоя задача:</h3>
+            <p>Создай HTML-страницу с таблицей 5×5 и кнопкой. При нажатии на кнопку ячейки на главной диагонали должны стать красными.</p>
+            <p>Используй <code>document.getElementById</code> и свойство <code>rows</code>.</p>
+            <div class="tip-box">
+                <strong>💡 Подсказки:</strong>
+                <ul>
+                    <li><code>document.getElementById('myTable')</code> — получаем таблицу</li>
+                    <li><code>table.rows</code> — коллекция всех строк таблицы</li>
+                    <li><code>row.cells</code> — коллекция ячеек в строке</li>
+                    <li>На диагонали индекс строки равен индексу ячейки: <code>table.rows[i].cells[i]</code></li>
+                </ul>
+            </div>
+            <details class="solution-hint">
+                <summary>🔑 Посмотреть решение (только если совсем не получается)</summary>
+                <pre><code>function highlightDiagonal() {
+    const table = document.getElementById('myTable');
+    for (let i = 0; i &lt; table.rows.length; i++) {
+        table.rows[i].cells[i].style.backgroundColor = 'red';
+        table.rows[i].cells[i].style.color = 'white';
+    }
+}</code></pre>
+            </details>
+        </div>
+        
+        <h2 id="task3">🔍 Задание 3. Использование getElementById</h2>
+        <p>Если у элемента есть атрибут <code>id</code>, мы можем получить его вызовом <code>document.getElementById(id)</code>, где бы он ни находился.</p>
+        
+        <div class="task-box">
+            <h3>✏️ Твоя задача:</h3>
+            <p>Создай страницу с тремя элементами, у которых есть id:</p>
+            <ul>
+                <li>Заголовок <code>&lt;h1 id="title"&gt;Привет!&lt;/h1&gt;</code></li>
+                <li>Параграф <code>&lt;p id="text"&gt;Какой-то текст&lt;/p&gt;</code></li>
+                <li>Кнопка <code>&lt;button id="myButton"&gt;Нажми меня&lt;/button&gt;</code></li>
+            </ul>
+            <p>С помощью <code>getElementById</code> измени:</p>
+            <ol>
+                <li>Цвет заголовка на синий</li>
+                <li>Размер шрифта параграфа на 20px</li>
+                <li>Фон кнопки на зелёный</li>
+            </ol>
+            <details class="solution-hint">
+                <summary>🔑 Посмотреть решение (только если совсем не получается)</summary>
+                <pre><code>document.getElementById('title').style.color = 'blue';
+document.getElementById('text').style.fontSize = '20px';
+document.getElementById('myButton').style.background = 'green';</code></pre>
+            </details>
+        </div>
+        
+        <h2 id="bonus1">⭐ Бонус-задание 1. Светофор</h2>
+        <p>Создай интерактивный светофор. При клике на кнопку «Следующий» цвета должны переключаться в правильном порядке.</p>
+        
+        <div class="task-box">
+            <h3>✏️ Твоя задача:</h3>
+            <p>Дан готовый HTML и CSS для светофора, но код JavaScript не дописан. Тебе нужно:</p>
+            <ol>
+                <li>Найти все лампочки с помощью <code>document.querySelectorAll('.light')</code></li>
+                <li>Создать массив состояний <code>states</code>, где каждое состояние — это массив из трёх чисел (1 — включено, 0 — выключено)</li>
+                <li>Порядок переключения: Красный → Красный+Жёлтый → Зелёный → Жёлтый → и снова Красный</li>
+                <li>Написать функцию <code>updateLights()</code>, которая включает/выключает лампочки согласно текущему состоянию</li>
+                <li>Привязать функцию к кнопке</li>
+            </ol>
+            
+            <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;style&gt;
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 30px;
+            background: #1a1a2e;
+            color: white;
+        }
+        .traffic-light {
+            background: #2c3e50;
+            width: 120px;
+            padding: 20px;
+            border-radius: 30px;
+            margin: 20px auto;
+        }
+        .light {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 10px auto;
+            opacity: 0.3;
+            transition: 0.3s;
+        }
+        .red { background: #e74c3c; }
+        .yellow { background: #f1c40f; }
+        .green { background: #2ecc71; }
+        .active {
+            opacity: 1;
+            box-shadow: 0 0 20px currentColor;
+        }
+        button {
+            background: #feca57;
+            color: #1a1a2e;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;🚦 Светофор&lt;/h1&gt;
+    &lt;div class="traffic-light"&gt;
+        &lt;div class="light red"&gt;&lt;/div&gt;
+        &lt;div class="light yellow"&gt;&lt;/div&gt;
+        &lt;div class="light green"&gt;&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;button id="nextLight"&gt;➡️ Следующий&lt;/button&gt;
+    
+    &lt;script&gt;
+        // НАПИШИ КОД ЗДЕСЬ
+        // 1. Найди все лампочки
+        // const lights = ...
+        
+        // 2. Создай массив состояний
+        // const states = ...
+        
+        // 3. Создай переменную для текущего состояния
+        // let stateIndex = 0;
+        
+        // 4. Напиши функцию updateLights()
+        
+        // 5. Привяжи функцию к кнопке
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+            
+            <details class="solution-hint">
+                <summary>🔑 Посмотреть решение (только если совсем не получается)</summary>
+                <pre><code>const lights = document.querySelectorAll('.light');
+const states = [
+    [1, 0, 0],  // красный
+    [1, 1, 0],  // красный + жёлтый
+    [0, 0, 1],  // зелёный
+    [0, 1, 0]   // жёлтый
+];
+let stateIndex = 0;
+
+function updateLights() {
+    for (let i = 0; i &lt; lights.length; i++) {
+        if (states[stateIndex][i]) {
+            lights[i].classList.add('active');
+        } else {
+            lights[i].classList.remove('active');
+        }
+    }
+    stateIndex = (stateIndex + 1) % states.length;
+}
+
+updateLights();
+document.getElementById('nextLight').onclick = updateLights;</code></pre>
+            </details>
+        </div>
+        
+        <h2 id="bonus2">🔎 Бонус-задание 2. Исследователь страницы</h2>
+        <p>Открой любую страницу в интернете (например, google.com, wikipedia.org или любую другую). Нажми <code>F12</code> и перейди на вкладку <strong>Elements</strong>.</p>
+        
+        <div class="success-box">
+            <strong>📝 Что нужно сделать:</strong>
+            <ul>
+                <li>🔍 Найди тег <code>&lt;body&gt;</code> — что у него внутри?</li>
+                <li>🔍 Найди тег <code>&lt;title&gt;</code> — какой текст в нём?</li>
+                <li>🔍 Найди элемент с классом <code>header</code> или <code>menu</code> (если есть)</li>
+                <li>✏️ Попробуй изменить текст любого элемента прямо в браузере (двойной клик по тексту во вкладке Elements)</li>
+                <li>🎨 В правой панели (Styles) измени цвет фона любого элемента</li>
+                <li>🖱️ Нажми на кнопку <strong>Выбрать элемент</strong> (значок стрелки в левом верхнем углу инспектора) и наведи на любой элемент страницы — браузер сам найдёт его в DOM-дереве</li>
+            </ul>
+            <p style="margin-top: 10px;"><strong>Результат:</strong> напиши в тетради (или сохрани в файл), какие элементы ты нашёл и какие изменения сделал.</p>
+        </div>
+        
+        <div class="tip-box">
+            <strong>💡 Инструменты разработчика:</strong>
+            <ul>
+                <li><strong>Styles</strong> — здесь видно CSS, применённый к элементу. Почти всё можно отредактировать на месте.</li>
+                <li><strong>Computed</strong> — итоговые CSS-свойства элемента.</li>
+                <li><strong>Event Listeners</strong> — обработчики событий, привязанные к элементу.</li>
+                <li><strong>Console</strong> — можно вводить JavaScript-код прямо здесь. Выбранный элемент доступен как <code>$0</code>.</li>
+            </ul>
+        </div>
+        
+        <h2 id="cheatsheet">📚 Шпаргалка по DOM</h2>
+        <div class="cheatsheet">
+            <table>
+                <tr>
+                    <th>Команда</th>
+                    <th>Что делает</th>
+                </tr>
+                <tr>
+                    <td><code>document.getElementById('id')</code></td>
+                    <td>Находит элемент по id</td>
+                </tr>
+                <tr>
+                    <td><code>document.getElementsByClassName('class')</code></td>
+                    <td>Находит все элементы по классу (коллекция)</td>
+                </tr>
+                <tr>
+                    <td><code>document.querySelector('.class')</code></td>
+                    <td>Находит первый элемент по CSS-селектору</td>
+                </tr>
+                <tr>
+                    <td><code>document.querySelectorAll('div')</code></td>
+                    <td>Находит ВСЕ элементы по CSS-селектору</td>
+                </tr>
+                <tr>
+                    <td><code>element.parentElement</code></td>
+                    <td>Родитель элемента</td>
+                </tr>
+                <tr>
+                    <td><code>element.children</code></td>
+                    <td>Дети элемента</td>
+                </tr>
+                <tr>
+                    <td><code>element.firstElementChild</code></td>
+                    <td>Первый дочерний элемент</td>
+                </tr>
+                <tr>
+                    <td><code>element.lastElementChild</code></td>
+                    <td>Последний дочерний элемент</td>
+                </tr>
+                <tr>
+                    <td><code>element.classList.add('class')</code></td>
+                    <td>Добавляет класс</td>
+                </tr>
+                <tr>
+                    <td><code>element.classList.remove('class')</code></td>
+                    <td>Удаляет класс</td>
+                </tr>
+                <tr>
+                    <td><code>element.classList.toggle('class')</code></td>
+                    <td>Переключает класс (добавляет/удаляет)</td>
+                </tr>
+                <tr>
+                    <td><code>element.style.color = 'red'</code></td>
+                    <td>Меняет стиль</td>
+                </tr>
+                <tr>
+                    <td><code>element.innerHTML = 'текст'</code></td>
+                    <td>Меняет HTML-содержимое</td>
+                </tr>
+                <tr>
+                    <td><code>element.textContent = 'текст'</code></td>
+                    <td>Меняет текстовое содержимое</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="tip-box">
+            <strong>💻 Взаимодействие с консолью:</strong>
+            <ul>
+                <li>На вкладке <strong>Elements</strong> выбери любой элемент</li>
+                <li>Нажми <strong>Esc</strong> — откроется консоль</li>
+                <li>Выбранный элемент доступен как <code>$0</code></li>
+                <li>Попробуй: <code>$0.style.background = 'red'</code></li>
+            </ul>
+        </div>
+        
+        <hr>
+        
+        <div style="text-align: center; padding: 20px;">
+            <h3>🎉 Удачи в выполнении заданий!</h3>
+            <p style="margin: 20px 0;">Используй шпаргалку, экспериментируй в консоли и не бойся ошибаться — это лучший способ научиться!</p>
+            <div class="nav-buttons">
+                <div></div>
+                <button class="btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">⬆️ Наверх</button>
+            </div>
+        </div>
+        
+    </div>
+</body>
+</html>
